@@ -12,6 +12,7 @@ import { instrumentations } from "../../telemetry";
 import { sanitizeClientConfig } from "./client-config-sanitizer";
 import manifest from "./manifest.json";
 import { RemoteTunnelController } from "./remote-tunnel/remote-tunnel-controller";
+import { registerErrorHandler, registerSecurityMiddleware } from "./security";
 import { StaticServer } from "./static-server";
 import type { ServerConfig } from "./types";
 import { getRoutes, type PluginEndpoints, printRoutes } from "./utils";
@@ -93,8 +94,12 @@ export class ServerPlugin extends Plugin {
    * @returns The express application.
    */
   async start(): Promise<express.Application> {
+    // Security middleware first — inspects headers only, no body needed
+    registerSecurityMiddleware(this.serverApplication, this.config.security);
+
     this.serverApplication.use(
       express.json({
+        limit: this.config.bodyLimit ?? "100kb",
         type: (req) => {
           // Skip JSON parsing for routes that declared skipBodyParsing
           // (e.g. file uploads where the raw body must flow through).
@@ -121,6 +126,9 @@ export class ServerPlugin extends Plugin {
     this.serverApplication.use(this.remoteTunnelController.middleware);
 
     await this.setupFrontend(endpoints, pluginConfigs);
+
+    // Error handler last — catches unhandled errors from API routes
+    registerErrorHandler(this.serverApplication, this.config.security);
 
     const server = this.serverApplication.listen(
       this.config.port ?? ServerPlugin.DEFAULT_CONFIG.port,

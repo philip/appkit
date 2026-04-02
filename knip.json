@@ -8,7 +8,9 @@
   ],
   "workspaces": {
     "packages/appkit": {},
-    "packages/appkit-ui": {}
+    "packages/appkit-ui": {
+      "ignoreDependencies": ["react-dom", "@types/react-dom"]
+    }
   },
   "ignore": [
     "**/*.generated.ts",
