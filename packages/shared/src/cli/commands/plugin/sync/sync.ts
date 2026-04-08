@@ -8,7 +8,10 @@ import {
   resolveManifestInDir,
 } from "../manifest-resolve";
 import type {
+  Origin,
   PluginManifest,
+  ResourceFieldEntry,
+  ScaffoldingDescriptor,
   TemplatePlugin,
   TemplatePluginsManifest,
 } from "../manifest-types";
@@ -34,6 +37,43 @@ function isWithinDirectory(filePath: string, boundary: string): boolean {
     resolvedPath === resolvedBoundary ||
     resolvedPath.startsWith(`${resolvedBoundary}${path.sep}`)
   );
+}
+
+/**
+ * Derives the origin of a resource field value based on its properties.
+ * - localOnly: true → "platform" (auto-injected by Databricks Apps platform)
+ * - value present → "static" (hardcoded value)
+ * - resolve present → "cli" (resolved by CLI during init)
+ * - else → "user" (user must provide the value)
+ */
+function computeOrigin(field: ResourceFieldEntry): Origin {
+  if (field.localOnly) return "platform";
+  if (field.value !== undefined) return "static";
+  if (field.resolve !== undefined) return "cli";
+  return "user";
+}
+
+/**
+ * Injects computed `origin` onto every resource field in all plugins.
+ * Mutates the plugins object in place for efficiency.
+ */
+function enrichFieldsWithOrigin(
+  plugins: TemplatePluginsManifest["plugins"],
+): void {
+  for (const plugin of Object.values(plugins)) {
+    for (const group of [
+      plugin.resources.required,
+      plugin.resources.optional,
+    ]) {
+      for (const resource of group) {
+        if (!resource.fields) continue;
+        for (const field of Object.values(resource.fields)) {
+          (field as ResourceFieldEntry & { origin?: Origin }).origin =
+            computeOrigin(field);
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -84,6 +124,9 @@ async function loadPluginEntry(
       ...(manifest.onSetupMessage && {
         onSetupMessage: manifest.onSetupMessage,
       }),
+      ...(manifest.postScaffold && {
+        postScaffold: manifest.postScaffold,
+      }),
     },
   ];
 }
@@ -106,6 +149,40 @@ const SERVER_FILE_CANDIDATES = ["server/server.ts", "server/index.ts"];
  * Plugins found here are added to the manifest even if not imported in the server.
  */
 const CONVENTIONAL_LOCAL_PLUGIN_DIRS = ["plugins", "server"];
+
+/**
+ * Scaffolding descriptor for the `databricks apps init` command.
+ * Included in v2.0 template manifests to guide scaffolding agents.
+ */
+const TEMPLATE_SCAFFOLDING: ScaffoldingDescriptor = {
+  command: "databricks apps init",
+  flags: {
+    "--template-dir": {
+      description: "Path to the template directory containing the app scaffold",
+      required: true,
+    },
+    "--config-dir": {
+      description: "Path to the output directory for the initialized app",
+      required: true,
+    },
+    "--profile": {
+      description: "Databricks CLI profile to use for authentication",
+      required: false,
+    },
+  },
+  rules: {
+    never: [
+      "Modify files inside the template directory",
+      "Skip resource configuration prompts",
+      "Hardcode workspace-specific values in template files",
+    ],
+    must: [
+      "Use the template manifest (appkit.plugins.json) as the source of truth for available plugins",
+      "Respect requiredByTemplate flags when presenting plugin selection",
+      "Generate .env files with all required environment variables from selected plugins",
+    ],
+  },
+};
 
 /**
  * Find the server entry file by checking candidate paths in order.
@@ -413,6 +490,9 @@ async function scanForPlugins(
         ...(manifest.onSetupMessage && {
           onSetupMessage: manifest.onSetupMessage,
         }),
+        ...(manifest.postScaffold && {
+          postScaffold: manifest.postScaffold,
+        }),
       } satisfies TemplatePlugin;
     }
   }
@@ -522,11 +602,15 @@ function writeManifest(
   { plugins }: { plugins: TemplatePluginsManifest["plugins"] },
   options: { write?: boolean; silent?: boolean; json?: boolean },
 ) {
+  // Enrich fields with computed origin for v2.0
+  enrichFieldsWithOrigin(plugins);
+
   const templateManifest: TemplatePluginsManifest = {
     $schema:
       "https://databricks.github.io/appkit/schemas/template-plugins.schema.json",
-    version: "1.0",
+    version: "2.0",
     plugins,
+    scaffolding: TEMPLATE_SCAFFOLDING,
   };
 
   const serialized = JSON.stringify(templateManifest, null, 2);
@@ -769,8 +853,9 @@ async function runPluginsSync(options: {
   writeManifest(outputPath, { plugins }, options);
 }
 
-/** Exported for testing: path boundary check, AST parsing, trust checks. */
+/** Exported for testing: path boundary check, AST parsing, trust checks, origin computation. */
 export {
+  computeOrigin,
   isWithinDirectory,
   parseImports,
   parsePluginUsages,
