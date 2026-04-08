@@ -214,6 +214,10 @@ export interface PluginManifest {
    * When true, this plugin is excluded from the template plugins manifest (appkit.plugins.json) during sync.
    */
   hidden?: boolean;
+  /**
+   * Ordered list of post-scaffolding instructions shown to the user after project initialization. Array position determines display order.
+   */
+  postScaffold?: PostScaffoldStep[];
 }
 /**
  * Defines a single field for a resource. Each field has its own environment variable and optional description. Single-value types use one key (e.g. id); multi-value types (database, secret) use multiple (e.g. instance_name, database_name or scope, key).
@@ -250,6 +254,32 @@ export interface ResourceFieldEntry {
    * Named resolver prefixed by resource type (e.g., 'postgres:host'). The CLI resolves this value during the init prompt flow.
    */
   resolve?: string;
+  discovery?: DiscoveryDescriptor;
+}
+/**
+ * How the CLI discovers values for this field via a Databricks CLI command.
+ */
+export interface DiscoveryDescriptor {
+  /**
+   * Databricks CLI command that lists resources. Must include <PROFILE> placeholder.
+   */
+  cliCommand: string;
+  /**
+   * jq-style path to the field used as the selected value (e.g., '.id', '.name').
+   */
+  selectField: string;
+  /**
+   * jq-style path to the field shown to the user in selection UI. Defaults to selectField if omitted.
+   */
+  displayField?: string;
+  /**
+   * Name of a sibling field within the same resource that must be resolved first. Used to express ordering dependencies between resource fields.
+   */
+  dependsOn?: string;
+  /**
+   * Single-value fast-path command that returns exactly one value, skipping interactive selection.
+   */
+  shortcut?: string;
 }
 /**
  * This interface was referenced by `PluginManifest`'s JSON-Schema
@@ -282,4 +312,48 @@ export interface ConfigSchemaProperty {
   minLength?: number;
   maxLength?: number;
   required?: string[];
+}
+/**
+ * A post-scaffolding instruction shown to the user after project initialization.
+ *
+ * This interface was referenced by `PluginManifest`'s JSON-Schema
+ * via the `definition` "postScaffoldStep".
+ */
+export interface PostScaffoldStep {
+  /**
+   * Human-readable instruction for the user to follow after scaffolding.
+   */
+  instruction: string;
+  /**
+   * Whether this step is required for the plugin to function correctly.
+   */
+  required?: boolean;
+}
+/**
+ * Describes how the CLI discovers values for a resource field via a Databricks CLI command.
+ *
+ * This interface was referenced by `PluginManifest`'s JSON-Schema
+ * via the `definition` "discoveryDescriptor".
+ */
+export interface DiscoveryDescriptor1 {
+  /**
+   * Databricks CLI command that lists resources. Must include <PROFILE> placeholder.
+   */
+  cliCommand: string;
+  /**
+   * jq-style path to the field used as the selected value (e.g., '.id', '.name').
+   */
+  selectField: string;
+  /**
+   * jq-style path to the field shown to the user in selection UI. Defaults to selectField if omitted.
+   */
+  displayField?: string;
+  /**
+   * Name of a sibling field within the same resource that must be resolved first. Used to express ordering dependencies between resource fields.
+   */
+  dependsOn?: string;
+  /**
+   * Single-value fast-path command that returns exactly one value, skipping interactive selection.
+   */
+  shortcut?: string;
 }
