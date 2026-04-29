@@ -115,7 +115,7 @@ export class AnalyticsPlugin extends Plugin {
     res: express.Response,
   ): Promise<void> {
     const { query_key } = req.params;
-    const { parameters, format = "JSON" } = req.body as IAnalyticsQueryRequest;
+    const { parameters, format = "JSON_ARRAY" } = req.body as IAnalyticsQueryRequest;
 
     // Request-scoped logging with WideEvent tracking
     logger.debug(req, "Executing query: %s (format=%s)", query_key, format);
@@ -151,7 +151,7 @@ export class AnalyticsPlugin extends Plugin {
     const executorKey = isAsUser ? this.resolveUserId(req) : "global";
 
     const queryParameters =
-      format === "ARROW"
+      format === "ARROW_STREAM"
         ? {
             formatParameters: {
               disposition: "EXTERNAL_LINKS",
