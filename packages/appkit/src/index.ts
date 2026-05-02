@@ -20,12 +20,16 @@ export type {
   DatabaseCredential,
   GenerateDatabaseCredentialRequest,
   LakebasePoolConfig,
+  LakebasePostgrestClient,
+  LakebasePostgrestClientConfig,
+  LakebaseTokenResolver,
   RequestedClaims,
   RequestedResource,
 } from "./connectors/lakebase";
 // Lakebase Autoscaling connector
 export {
   createLakebasePool,
+  createLakebasePostgrestClient,
   generateDatabaseCredential,
   getLakebaseOrmConfig,
   getLakebasePgConfig,
