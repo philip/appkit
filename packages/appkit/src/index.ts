@@ -39,6 +39,8 @@ export {
 } from "./connectors/lakebase";
 export { getExecutionContext } from "./context";
 export { createApp } from "./core";
+// Database
+export * from "./database";
 // Errors
 export {
   AppKitError,
