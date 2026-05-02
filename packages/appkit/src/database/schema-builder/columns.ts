@@ -125,8 +125,15 @@ export function boolean(): AppKitColumnChain {
  * Create a timestamp column.
  * @returns The wrapped column chain.
  */
-export function timestamp(): AppKitColumnChain {
-  return wrap(pgTimestamp({ mode: "date" }));
+export function timestamp(
+  options: { timezone?: boolean; withTimezone?: boolean } = {},
+): AppKitColumnChain {
+  return wrap(
+    pgTimestamp({
+      mode: "date",
+      withTimezone: options.timezone ?? options.withTimezone ?? false,
+    }),
+  );
 }
 
 /**
@@ -178,7 +185,9 @@ export function enumColumn(
 /**
  * Create a foreign key column. The reference target is captured live and
  * resolved at `buildTable()` time, so forward references (e.g. `fk(other.id)`
- * declared before `table("other", ...)`) work.
+ * declared before `table("other", ...)`) work. When the target was already
+ * built, `toTable`/`toColumn` are populated immediately so the introspector
+ * doesn't depend on define-schema's deferred resolver running first.
  *
  * The FK column type is currently fixed to `integer`. If the target is a
  * `bigid()` (`bigserial`) or `uuid()` PK, declare the FK column with the
@@ -191,9 +200,15 @@ export function enumColumn(
  */
 export function fk(target: AppKitColumn): FkColumnChain {
   const baseChain = wrap(pgInteger(), {
-    // Live target reference; buildTable() resolves to toTable/toColumn after
-    // all tables have been built and column names stamped.
-    references: { target },
+    references: {
+      target,
+      ...(target.$meta.tableName && target.$meta.columnName
+        ? {
+            toTable: target.$meta.tableName,
+            toColumn: target.$meta.columnName,
+          }
+        : {}),
+    },
   });
 
   // Override chain methods to return FkColumnChain at the type level. Runtime
@@ -229,14 +244,14 @@ export function fk(target: AppKitColumn): FkColumnChain {
     },
     onDelete: (value: NonNullable<Relation["onDelete"]>) => {
       fkChain.$meta.references = {
-        ...(fkChain.$meta.references ?? {}),
+        ...(fkChain.$meta.references ?? { target }),
         onDelete: value,
       };
       return fkChain;
     },
     onUpdate: (value: NonNullable<Relation["onUpdate"]>) => {
       fkChain.$meta.references = {
-        ...(fkChain.$meta.references ?? {}),
+        ...(fkChain.$meta.references ?? { target }),
         onUpdate: value,
       };
       return fkChain;
