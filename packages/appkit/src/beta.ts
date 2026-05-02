@@ -6,3 +6,11 @@
 // "stability" field. See tools/generate-plugin-entries.ts.
 export { DatabricksAdapter, parseTextToolCalls } from "./agents/databricks";
 export * from "./plugins/beta-exports.generated";
+export type {
+  EntityHooks,
+  HookContext,
+  HttpAccess,
+  HttpEntityOverride,
+  IDatabaseConfig,
+} from "./plugins/database";
+export { readDefaults, writeDefaults } from "./plugins/database/defaults";
