@@ -203,6 +203,26 @@ function IndexRoute() {
           <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
             <div className="flex flex-col h-full">
               <h3 className="text-2xl font-semibold text-foreground mb-3">
+                Database Plugin
+              </h3>
+              <p className="text-muted-foreground mb-6 flex-grow">
+                Schema-driven CRUD end-to-end: declare tables in{" "}
+                <code>config/database/schema.ts</code>, get typed{" "}
+                <code>db.cases.where(...)</code> on the browser, routes
+                auto-mounted on the server. No glue code.
+              </p>
+              <Button
+                onClick={() => navigate({ to: "/database" })}
+                className="w-full"
+              >
+                Try Database Demo
+              </Button>
+            </div>
+          </Card>
+
+          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex flex-col h-full">
+              <h3 className="text-2xl font-semibold text-foreground mb-3">
                 Lakebase Examples
               </h3>
               <p className="text-muted-foreground mb-6 flex-grow">

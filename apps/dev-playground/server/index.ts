@@ -11,6 +11,7 @@ import {
   serving,
   WRITE_ACTIONS,
 } from "@databricks/appkit";
+import { database } from "@databricks/appkit/beta";
 import { WorkspaceClient } from "@databricks/sdk-experimental";
 // TODO: re-enable once vector-search is exported from @databricks/appkit
 // import { vectorSearch } from "@databricks/appkit";
@@ -55,6 +56,7 @@ createApp({
     reconnect(),
     telemetryExamples(),
     analytics({}),
+    database(),
     genie({
       spaces: { demo: process.env.DATABRICKS_GENIE_SPACE_ID ?? "placeholder" },
     }),

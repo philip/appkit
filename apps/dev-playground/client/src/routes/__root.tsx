@@ -48,6 +48,14 @@ function RootComponent() {
                     Arrow Analytics
                   </Button>
                 </Link>
+                <Link to="/database" className="no-underline">
+                  <Button
+                    variant="ghost"
+                    className="text-foreground hover:text-secondary-foreground"
+                  >
+                    Database
+                  </Button>
+                </Link>
                 <Link to="/lakebase" className="no-underline">
                   <Button
                     variant="ghost"
