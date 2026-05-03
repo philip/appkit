@@ -26,6 +26,67 @@
         "optional": []
       }
     },
+    "database": {
+      "name": "database",
+      "displayName": "Database",
+      "description": "Application database with schema-driven CRUD, type generation, OBO, RLS, and LLM tools",
+      "package": "@databricks/appkit",
+      "resources": {
+        "required": [
+          {
+            "type": "postgres",
+            "alias": "Application Database",
+            "resourceKey": "database",
+            "description": "Lakebase Postgres instance for application data. Schema lives at config/database/schema.ts.",
+            "permission": "CAN_CONNECT_AND_CREATE",
+            "fields": {
+              "branch": {
+                "description": "Full Lakebase Postgres branch resource name.",
+                "examples": [
+                  "projects/{project-id}/branches/{branch-id}"
+                ]
+              },
+              "database": {
+                "description": "Full Lakebase Postgres database resource name."
+              },
+              "host": {
+                "env": "PGHOST",
+                "localOnly": true,
+                "resolve": "postgres:host",
+                "description": "Postgres host for local development."
+              },
+              "databaseName": {
+                "env": "PGDATABASE",
+                "localOnly": true,
+                "resolve": "postgres:databaseName",
+                "description": "Postgres database name for local development."
+              },
+              "endpointPath": {
+                "env": "LAKEBASE_ENDPOINT",
+                "bundleIgnore": true,
+                "resolve": "postgres:endpointPath",
+                "description": "Lakebase endpoint resource name."
+              },
+              "port": {
+                "env": "PGPORT",
+                "localOnly": true,
+                "value": "5432",
+                "description": "Postgres port."
+              },
+              "sslmode": {
+                "env": "PGSSLMODE",
+                "localOnly": true,
+                "value": "require",
+                "description": "Postgres SSL mode."
+              }
+            }
+          }
+        ],
+        "optional": []
+      },
+      "onSetupMessage": "Database plugin installed. Next: npx appkit db init\n  - For a new database: define entities in config/database/schema.ts (and optional demo rows in config/database/seed.sql) before running init.\n  - For an existing Lakebase: just run init; it will introspect the schema for you.\nThe init command picks the Databricks profile and Lakebase project, creates a per-user dev branch, writes .env, and runs the right setup or introspection.",
+      "stability": "beta"
+    },
     "files": {
       "name": "files",
       "displayName": "Files Plugin",
