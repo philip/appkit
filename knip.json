@@ -21,6 +21,7 @@
     "packages/appkit/src/plugins/agents/tools/index.ts",
     "packages/appkit/src/plugins/agents/from-plugin.ts",
     "packages/appkit/src/plugins/agents/load-agents.ts",
+    "packages/appkit-ui/src/react/database/**",
     "template/**",
     "tools/**",
     "docs/**"
