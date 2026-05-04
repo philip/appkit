@@ -89,6 +89,21 @@ const typedocSidebar: SidebarsConfig = {
       items: [
         {
           type: "doc",
+          id: "api/appkit/Interface.AppKitColumn",
+          label: "AppKitColumn"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Interface.AppKitColumnChain",
+          label: "AppKitColumnChain"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Interface.AppKitTable",
+          label: "AppKitTable"
+        },
+        {
+          type: "doc",
           id: "api/appkit/Interface.BasePluginConfig",
           label: "BasePluginConfig"
         },
@@ -99,8 +114,28 @@ const typedocSidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/appkit/Interface.ColumnMeta",
+          label: "ColumnMeta"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Interface.CountOptions",
+          label: "CountOptions"
+        },
+        {
+          type: "doc",
           id: "api/appkit/Interface.DatabaseCredential",
           label: "DatabaseCredential"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Interface.DataPath",
+          label: "DataPath"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Interface.DefineSchemaOptions",
+          label: "DefineSchemaOptions"
         },
         {
           type: "doc",
@@ -154,8 +189,18 @@ const typedocSidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/appkit/Interface.LakebasePostgrestClientConfig",
+          label: "LakebasePostgrestClientConfig"
+        },
+        {
+          type: "doc",
           id: "api/appkit/Interface.PluginManifest",
           label: "PluginManifest"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Interface.Relation",
+          label: "Relation"
         },
         {
           type: "doc",
@@ -181,6 +226,16 @@ const typedocSidebar: SidebarsConfig = {
           type: "doc",
           id: "api/appkit/Interface.ResourceRequirement",
           label: "ResourceRequirement"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Interface.SchemaBuilderContext",
+          label: "SchemaBuilderContext"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Interface.SelectOptions",
+          label: "SelectOptions"
         },
         {
           type: "doc",
@@ -240,6 +295,11 @@ const typedocSidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/appkit/TypeAlias.IncludeSpec",
+          label: "IncludeSpec"
+        },
+        {
+          type: "doc",
           id: "api/appkit/TypeAlias.JobHandle",
           label: "JobHandle"
         },
@@ -247,6 +307,21 @@ const typedocSidebar: SidebarsConfig = {
           type: "doc",
           id: "api/appkit/TypeAlias.JobsExport",
           label: "JobsExport"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/TypeAlias.LakebasePostgrestClient",
+          label: "LakebasePostgrestClient"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/TypeAlias.LakebaseTokenResolver",
+          label: "LakebaseTokenResolver"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/TypeAlias.OrderSpec",
+          label: "OrderSpec"
         },
         {
           type: "doc",
@@ -260,6 +335,11 @@ const typedocSidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/appkit/TypeAlias.Schema",
+          label: "Schema"
+        },
+        {
+          type: "doc",
           id: "api/appkit/TypeAlias.ServingFactory",
           label: "ServingFactory"
         },
@@ -267,6 +347,11 @@ const typedocSidebar: SidebarsConfig = {
           type: "doc",
           id: "api/appkit/TypeAlias.ToPlugin",
           label: "ToPlugin"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/TypeAlias.WhereSpec",
+          label: "WhereSpec"
         }
       ]
     },
@@ -274,6 +359,11 @@ const typedocSidebar: SidebarsConfig = {
       type: "category",
       label: "Variables",
       items: [
+        {
+          type: "doc",
+          id: "api/appkit/Variable.APPKIT_TABLE",
+          label: "APPKIT_TABLE"
+        },
         {
           type: "doc",
           id: "api/appkit/Variable.READ_ACTIONS",
@@ -297,6 +387,11 @@ const typedocSidebar: SidebarsConfig = {
       items: [
         {
           type: "doc",
+          id: "api/appkit/Function.appKitDatabaseTypesPlugin",
+          label: "appKitDatabaseTypesPlugin"
+        },
+        {
+          type: "doc",
           id: "api/appkit/Function.appKitServingTypesPlugin",
           label: "appKitServingTypesPlugin"
         },
@@ -307,13 +402,48 @@ const typedocSidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/appkit/Function.bigid",
+          label: "bigid"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Function.bigint",
+          label: "bigint"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Function.boolean",
+          label: "boolean"
+        },
+        {
+          type: "doc",
           id: "api/appkit/Function.createApp",
           label: "createApp"
         },
         {
           type: "doc",
+          id: "api/appkit/Function.createDrizzleDataPath",
+          label: "createDrizzleDataPath"
+        },
+        {
+          type: "doc",
           id: "api/appkit/Function.createLakebasePool",
           label: "createLakebasePool"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Function.createLakebasePostgrestClient",
+          label: "createLakebasePostgrestClient"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Function.defineSchema",
+          label: "defineSchema"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Function.enumeration",
+          label: "enumeration"
         },
         {
           type: "doc",
@@ -327,8 +457,18 @@ const typedocSidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/appkit/Function.fk",
+          label: "fk"
+        },
+        {
+          type: "doc",
           id: "api/appkit/Function.generateDatabaseCredential",
           label: "generateDatabaseCredential"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Function.generateDatabaseTypes",
+          label: "generateDatabaseTypes"
         },
         {
           type: "doc",
@@ -367,8 +507,43 @@ const typedocSidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/appkit/Function.id",
+          label: "id"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Function.integer",
+          label: "integer"
+        },
+        {
+          type: "doc",
           id: "api/appkit/Function.isSQLTypeMarker",
           label: "isSQLTypeMarker"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Function.jsonb",
+          label: "jsonb"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Function.text",
+          label: "text"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Function.timestamp",
+          label: "timestamp"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Function.uuid",
+          label: "uuid"
+        },
+        {
+          type: "doc",
+          id: "api/appkit/Function.varchar",
+          label: "varchar"
         }
       ]
     }
