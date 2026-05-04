@@ -345,20 +345,34 @@ export class ServerPlugin extends Plugin {
       this.remoteTunnelController.cleanup();
     }
 
-    // 1. abort active operations from plugins
+    // 1. abort active operations from plugins; await any returned promises so
+    //    pool drains finish before we trigger process.exit on shutdown timeout.
     if (this.config.plugins) {
-      for (const plugin of Object.values(this.config.plugins)) {
-        if (plugin.abortActiveOperations) {
+      const drains = Object.values(this.config.plugins)
+        .map((plugin) => {
+          if (!plugin.abortActiveOperations) return null;
           try {
-            plugin.abortActiveOperations();
+            return Promise.resolve(plugin.abortActiveOperations()).catch(
+              (err) => {
+                logger.error(
+                  "Error aborting operations for plugin %s: %O",
+                  plugin.name,
+                  err,
+                );
+              },
+            );
           } catch (err) {
             logger.error(
               "Error aborting operations for plugin %s: %O",
               plugin.name,
               err,
             );
+            return null;
           }
-        }
+        })
+        .filter((p): p is Promise<void> => p !== null);
+      if (drains.length > 0) {
+        await Promise.all(drains);
       }
     }
 

@@ -231,7 +231,7 @@ export abstract class Plugin<
     return this.skipBodyParsingPaths;
   }
 
-  abortActiveOperations(): void {
+  abortActiveOperations(): Promise<void> | void {
     this.streamManager.abortAll();
   }
 
