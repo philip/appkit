@@ -35,11 +35,3 @@ export {
   RequestedClaimsPermissionSet,
   type RequestedResource,
 } from "@databricks/lakebase";
-
-// Export Lakebase PostgREST client related types and functions.
-export {
-  createLakebasePostgrestClient,
-  type LakebasePostgrestClient,
-  type LakebasePostgrestClientConfig,
-  type LakebaseTokenResolver,
-} from "./postgrest";
