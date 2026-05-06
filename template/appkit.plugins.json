@@ -29,7 +29,7 @@
     "database": {
       "name": "database",
       "displayName": "Database",
-      "description": "Application database with schema-driven CRUD, type generation, OBO, RLS, and LLM tools",
+      "description": "Application database with schema-driven CRUD, type generation, OBO, and RLS",
       "package": "@databricks/appkit",
       "resources": {
         "required": [
