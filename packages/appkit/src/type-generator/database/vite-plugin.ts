@@ -13,24 +13,21 @@ import {
 const logger = createLogger("type-generator:database:vite-plugin");
 
 export interface AppKitDatabaseTypesPluginOptions {
-  /** Output `.d.ts` path relative to project root. Defaults to `shared/appkit-types/database.d.ts`. */
+  /** Override `.d.ts` output path (relative to project root). */
   outFile?: string;
-  /** Runtime column metadata output path relative to project root. */
+  /** Override columns module output path (relative to project root). */
   columnsOutFile?: string;
 }
 
 /**
- * Vite plugin — regenerates `shared/appkit-types/database.d.ts` and
- * `shared/appkit-types/database.columns.ts` whenever
- * `config/database/schema.ts` changes during dev. In production
- * (`vite build`) it runs once at `buildStart`.
- *
- * Only activates when `config/database/schema.ts` exists at the Vite root
- * or its parent. Apps without the database plugin pay nothing.
+ * Regenerate `database.d.ts` + `database.columns.ts` on schema change (dev) or
+ * once at `buildStart` (build). Only activates when `config/database/schema.ts`
+ * exists at the Vite root or its parent.
  */
 export function appKitDatabaseTypesPlugin(
   options: AppKitDatabaseTypesPluginOptions = {},
 ): Plugin {
+  let viteRoot = process.cwd();
   let projectRoot = process.cwd();
   let outFile = path.resolve(
     projectRoot,
@@ -83,6 +80,7 @@ export function appKitDatabaseTypesPlugin(
     },
 
     configResolved(config) {
+      viteRoot = path.resolve(config.root ?? process.cwd());
       projectRoot = path.resolve(config.root, "..");
       outFile = path.resolve(
         projectRoot,
@@ -99,13 +97,16 @@ export function appKitDatabaseTypesPlugin(
       await regenerate();
     },
 
-    transformIndexHtml() {
+    transformIndexHtml(_html, ctx) {
       if (!fs.existsSync(columnsOutFile)) return [];
+      const specifier = ctx?.server
+        ? `/@fs/${columnsOutFile.replace(/\\/g, "/")}`
+        : toRelativeImport(viteRoot, columnsOutFile);
       return [
         {
           tag: "script",
           attrs: { type: "module" },
-          children: `import ${JSON.stringify(columnsOutFile)};`,
+          children: `import ${JSON.stringify(specifier)};\n`,
           injectTo: "head-prepend" as const,
         },
       ];
@@ -124,4 +125,9 @@ export function appKitDatabaseTypesPlugin(
       });
     },
   };
+}
+
+function toRelativeImport(fromDir: string, targetFile: string): string {
+  const rel = path.relative(fromDir, targetFile).replace(/\\/g, "/");
+  return rel.startsWith(".") ? rel : `./${rel}`;
 }
